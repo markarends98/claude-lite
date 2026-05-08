@@ -1,56 +1,46 @@
 ---
 name: code-review
-description: Use after completing an implementation, significant feature, or a meaningful chunk of work to verify correctness before moving on. Do NOT use mid-implementation, for trivial changes, or before the work is actually done.
+description: Use after completing an implementation, significant feature, or a meaningful chunk of work to verify the code matches the project's coding standards before moving on. Do NOT use mid-implementation, for trivial changes, or before the work is actually done.
 ---
 
 # Code Review
 
-Dispatch a reviewer subagent on Haiku. Code review is pattern matching — Haiku handles it well at lower cost.
+No narration between steps — just execute.
 
-## Step 1 — Collect context
+## Step 1 — Run project tooling
+
+Detect available tools and scripts in one pass:
 
 ```bash
-git rev-parse HEAD~1   # BASE_SHA — SHA before the work started
-git rev-parse HEAD     # HEAD_SHA — current commit
+ls .prettierrc* prettier.config.* .eslintrc* eslint.config.* biome.json .stylelintrc* tsconfig.json 2>/dev/null
+node -e "const s=require('./package.json').scripts||{};console.log(Object.keys(s).filter(k=>/lint|format|check|typecheck/.test(k)).map(k=>k+': '+s[k]).join('\n'))" 2>/dev/null
 ```
 
-Note what was implemented in one sentence.
+Run every tool found with its auto-fix flag. If a tool has no auto-fix flag, fix errors manually. Fix all type errors from `tsc --noEmit` if applicable.
 
-## Step 2 — Dispatch subagent
+## Step 2 — Load standards
 
-Dispatch an Agent subagent with `model: haiku` and the following prompt (fill in placeholders):
+Read the project's `CLAUDE.md` in full and extract coding standards — naming conventions, architectural patterns, and anything tools cannot catch.
 
----
+## Step 3 — Review
 
-Review the git diff from BASE_SHA to HEAD_SHA.
+```bash
+git diff HEAD~1 HEAD
+```
 
-What was implemented: WHAT_WAS_IMPLEMENTED
-
-Check both correctness AND performance. For performance, apply this checklist to any per-frame, hot-path, or collection code:
-
-- Allocations: no `{}`, `[]`, spread `...`, `.map()`, `.filter()` in hot paths — pre-allocate and mutate in place
-- Loops: use `for (let i = 0; i < n; i++)`, cache `array.length`, no `for..of` on arrays
-- Map/Set: single `get()` + null check — never `has()` + `get()`; never `[...map.values()]` or `[...set]`
-- Removal: swap-remove (`arr[i] = arr[last]; arr.pop()`) for O(1) unordered removal; batch removals after iteration
-- Property access: cache stable config values at init — no `?? default` or `|| default` evaluated every frame
-
-**Output format — follow exactly:**
+Check the diff against the standards. Output findings only — no summary of what passed.
 
 **Verdict:** pass | pass with notes | needs work
 
-For each complex or critical finding:
+For each finding:
 - What is wrong
-- Why it matters
+- Which rule it violates
 - How to fix it
 
-For minor findings: one bullet per issue.
+Lead with the verdict. No preamble.
 
-No preamble. No summary. Lead with the verdict.
+## Step 4 — Act
 
----
-
-## Step 3 — Act on feedback
-
-- **needs work** — fix critical issues before proceeding
+- **needs work** — fix before proceeding
 - **pass with notes** — fix minor issues, then continue
 - **pass** — continue
