@@ -21,5 +21,5 @@ When installed, the plugin applies these rules to every conversation:
 
 ```
 /plugin marketplace add markarends98/claude-lite
-/plugin install claude-lite@markarends98-claude-lite
+/plugin install claude-lite@claude-lite
 ```
