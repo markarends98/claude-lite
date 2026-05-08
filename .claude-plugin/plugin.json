@@ -1,0 +1,9 @@
+{
+  "name": "claude-lite",
+  "description": "Lightweight personal plugin — brainstorm, plan, and code-review with low token usage.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mark Arends",
+    "email": "markiearends1998@gmail.com"
+  }
+}
