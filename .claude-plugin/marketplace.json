@@ -12,7 +12,7 @@
     {
       "name": "claude-lite",
       "version": "1.0.0",
-      "source": ".",
+      "source": "./plugin",
       "description": "Lightweight personal plugin — brainstorm, plan, and code-review with low token usage."
     }
   ]
