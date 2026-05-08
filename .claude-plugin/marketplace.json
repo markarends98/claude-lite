@@ -1,0 +1,19 @@
+{
+  "name": "markarends98-claude-lite",
+  "owner": {
+    "name": "Mark Arends",
+    "email": "markiearends1998@gmail.com"
+  },
+  "metadata": {
+    "description": "Lightweight personal Claude Code plugin",
+    "homepage": "https://github.com/markarends98/claude-lite"
+  },
+  "plugins": [
+    {
+      "name": "claude-lite",
+      "version": "1.0.0",
+      "source": ".",
+      "description": "Lightweight personal plugin — brainstorm, plan, and code-review with low token usage."
+    }
+  ]
+}
